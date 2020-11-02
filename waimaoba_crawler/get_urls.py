@@ -2,9 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def get_urls():
-    start_page = input('Start From: ')
-    end_page = input('End at: ')
+def get_urls(start_page, end_page):
     page_list = []
     for page in range(int(start_page), int(end_page) + 1):
         # print(page)
@@ -19,5 +17,4 @@ def get_urls():
             url = f"http://xp.waimaoba.com/{i.select('a')[0].get('href')}"
             urls.append(url)
 
-    print(len(urls))
     return urls
