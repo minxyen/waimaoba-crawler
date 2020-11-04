@@ -3,10 +3,7 @@ from bs4 import BeautifulSoup
 
 
 def get_urls(start_page, end_page):
-    page_list = []
-    for page in range(int(start_page), int(end_page) + 1):
-        # print(page)
-        page_list.append(page)
+    page_list = [page for page in range(int(start_page), int(end_page) + 1)]
 
     urls = []
     for page_num in page_list:

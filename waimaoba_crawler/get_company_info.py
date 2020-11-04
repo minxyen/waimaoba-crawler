@@ -3,8 +3,6 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from waimaoba_crawler.get_urls import get_urls
-
 
 def get_company_info(url):
     data = {'e_secret_key': 'waimaoba'}
@@ -13,24 +11,27 @@ def get_company_info(url):
     if r.status_code == requests.codes.ok:
         soup = BeautifulSoup(r.text, 'html.parser')
         # print(soup.prettify())
+        table = soup.find_all('div', {'class': 'message break-all'})[0]
+        string = table.get_text(strip=True, separator=' ')
         try:
-            table = soup.find_all('div', {'class': 'message break-all'})[0]
-            company_name = re.findall(r'Company Name \(公司名称\): .+ Industry',\
-                                 table.get_text(strip=True, separator=' '))[0][:-9].split(':')[1].strip().upper()
+            company_name = re.search(r'Company Name \(公司名称\):(.+) Industry Category \(行业分类\)',\
+                                     string).group(1).strip()
             print(company_name)
-        except IndexError:
+        except AttributeError:
             company_name = ''
 
         try:
-            contact_person = re.findall(r'Contact Person.+', table.text)[0].split(':')[1].strip().title()
+            # contact_person = re.findall(r'Contact Person.+', table.text)[0].split(':')[1].strip().title()
+            contact_person = re.search(r'Contact Person:(.+) Tel', string).group(1)
             print(contact_person)
-        except IndexError:
+        except AttributeError:
             contact_person = ''
 
         try:
-            email = re.findall(r'[a-zA-Z0-91\.-]+@[\w\.-]+', table.text)[0]
+            # email = re.findall(r'[a-zA-Z0-91\.-]+@[\w\.-]+', string)[0]
+            email = re.search(r'Email Address \(电子邮件\):(.+)', string).group(1).strip()
             print(email)
-        except IndexError:
+        except AttributeError:
             email = ''
 
         print(url)

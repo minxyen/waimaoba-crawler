@@ -1,24 +1,20 @@
-from waimaoba_crawler.get_company_info import get_urls
+from waimaoba_crawler.get_urls import get_urls
 from waimaoba_crawler.get_company_info import get_company_info
+from waimaoba_crawler.write_file import write_file
 
-import pandas as pd
 
+if __name__ == '__main__':
+    start_page = input('Start From: ')
+    end_page = input('End at: ')
 
-start_page = input('Start From: ')
-end_page = input('End at: ')
+    urls = get_urls(start_page, end_page)
+    print("Total urls: ", len(urls))
 
-urls = get_urls(start_page, end_page)
-print(len(urls))
+    data_list = []
+    for i in range(len(urls)):
+        company_info = get_company_info(urls[i])
+        data_list.append(company_info)
 
-data_list = []
-for i in range(len(urls)):
-    company_info = get_company_info(urls[i])
-    data_list.append(company_info)
-
-print(data_list)
-
-df = pd.DataFrame(data_list)
-print(df)
-df.to_excel(f'waimaoba{start_page}-{end_page}.xlsx', index=False)
+    write_file(data_list, start_page, end_page)
 
 
