@@ -5,7 +5,7 @@ from .step import Step
 
 
 class GetUrls(Step):
-    def process(self, data, inputs):
+    def process(self, passing_data, inputs):
         start_page = inputs['start_page']
         end_page = inputs['end_page']
 

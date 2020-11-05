@@ -6,10 +6,10 @@ class Pipeline:
         self.steps = steps
 
     def run(self, inputs):
-        data = None
+        passing_data = None
         for step in self.steps:
             try:
-                data = step.process(data, inputs)
+                passing_data = step.process(passing_data, inputs)
             except StepException as e:
                 print('Exception Happened', e)
                 break
