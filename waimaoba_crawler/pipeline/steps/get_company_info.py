@@ -3,6 +3,12 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
+from .step import Step
+
+
+# class GetCompanyInfo(Step):
+#     def process(self, inputs):
+
 
 def get_company_info(url):
     data = {'e_secret_key': 'waimaoba'}
