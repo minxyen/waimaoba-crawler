@@ -1,4 +1,7 @@
 import re
+import random
+import time
+import logging
 
 import requests
 from bs4 import BeautifulSoup
@@ -8,11 +11,17 @@ from .step import Step
 
 class GetCompanyInfo(Step):
     def process(self, passing_data, inputs):
+        logger = logging.getLogger()
 
         company_info_list = []
         secret_key = {'e_secret_key': 'waimaoba'}
         # 'http://xp.waimaoba.com/thread-1139756.htm'
+        count = 1
         for url in passing_data:
+            logger.info("{0}/{1}".format(count, len(passing_data)))
+            # logger.info("爬曲ing: {}".format(url))
+            sleep_time = random.randint(80, 130) / 100
+            time.sleep(sleep_time)
             r = requests.post(url, data=secret_key)
             if r.status_code == requests.codes.ok:
                 soup = BeautifulSoup(r.text, 'html.parser')
@@ -22,29 +31,21 @@ class GetCompanyInfo(Step):
                 try:
                     company_name = re.search(r'Company Name \(公司名称\):(.+) Industry Category \(行业分类\)',\
                                              string).group(1).strip()
-                    print('CompanyName: ', company_name)
-                except AttributeError:
-                    print('None')
+                except AttributeError as e:
+                    logger.warning("Can't find CompanyName {}".format(url))
                     company_name = ''
 
                 try:
-                    # contact_person = re.findall(r'Contact Person.+', table.text)[0].split(':')[1].strip().title()
                     contact_person = re.search(r'Contact Person:(.+) Tel', string).group(1)
-                    print('ContactPerson: ', contact_person)
-                except AttributeError:
-                    print('None')
+                except AttributeError as e:
+                    logger.warning("Can't find ContactPerson {}".format(url))
                     contact_person = ''
 
                 try:
-                    # email = re.findall(r'[a-zA-Z0-91\.-]+@[\w\.-]+', string)[0]
                     email = re.search(r'Email Address \(电子邮件\):(.+)', string).group(1).strip()
-                    print('Email: ', email)
-                except AttributeError:
-                    print('None')
+                except AttributeError as e:
+                    logger.warning("Can't find Email {}".format(url))
                     email = ''
-
-            print('FromUrl: ', url)
-            print('------------------------------------------------------')
 
             company_info= {
                 'CompanyName': company_name,
@@ -54,6 +55,7 @@ class GetCompanyInfo(Step):
             }
 
             company_info_list.append(company_info)
+            count += 1
 
-        print(company_info_list)
+        # print(company_info_list)
         return company_info_list
