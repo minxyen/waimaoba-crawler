@@ -2,6 +2,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
+from smtplib import SMTPRecipientsRefused
 
 from waimaoba_crawler.settings import APPLICATION_PASSWORD, SENDER_EMAIL
 
@@ -46,4 +47,30 @@ def send_email(contact_person, company_email):
         smtp.send_message(msg)
 
 
-send_email('Steve', 'stevehsieh2797@gmail.com')
+
+# ------------------------- for test (no commit)--------------------------
+company_infos = [
+                {'contact_person': '',
+                 'email': ''},
+
+                {'contact_person': 'Steve',
+                 'email': 'stevehsieh2797@gmail.com'},
+
+                {'contact_person': '',
+                 'email': 'aabbzee124@gmail.com'},
+
+                {'contact_person': '',
+                 'email': 'aabbz24@com'},
+
+                {'contact_person': '',
+                 'email': 'aabbz24com'}
+                ]
+
+for company_info in company_infos:
+    try:
+        send_email(company_info['contact_person'], company_info['email'])
+        print(company_info['email'], 'DONE')
+    except SMTPRecipientsRefused:
+        print('{} is not a valid email address'.format(company_info['email']))
+
+
